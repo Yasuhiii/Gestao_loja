@@ -1,0 +1,108 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam classFontStyle Bold
+skinparam backgroundColor white
+skinparam class {
+    BackgroundColor #F8F8F8
+    BorderColor #555555
+    ArrowColor #333333
+    HeaderBackgroundColor #D0E8FF
+}
+
+class Produto {
+    - nome : String
+    - preco : double
+    - quantidadeEmStock : int
+    --
+    + Produto(nome, preco, qtd)
+    + getNome() : String
+    + getPreco() : double
+    + getQuantidadeEmStock() : int
+    + setNome(nome : String)
+    + setPreco(preco : double)
+    + atualizarStock(quantidade : int)
+    + calcularValorTotalEmStock() : double
+    + toString() : String
+}
+
+class Cliente {
+    - nome : String
+    - id : int
+    - {static} contadorId : int
+    --
+    + Cliente(nome : String)
+    + getNome() : String
+    + getId() : int
+    + setNome(nome : String)
+    + calcularDesconto(total : double) : double
+    + getTipoCliente() : String
+    + toString() : String
+}
+
+class ClienteVIP {
+    - percentagemDesconto : double
+    --
+    + ClienteVIP(nome : String, desconto : double)
+    + getPercentagemDesconto() : double
+    + calcularDesconto(total : double) : double
+    + getTipoCliente() : String
+}
+
+class Pedido {
+    - cliente : Cliente
+    - produtos : ArrayList<Produto>
+    - quantidades : ArrayList<Integer>
+    - numeroPedido : int
+    - {static} contadorPedidos : int
+    --
+    + Pedido(cliente : Cliente)
+    + getNumeroPedido() : int
+    + getCliente() : Cliente
+    + adicionarProduto(p : Produto, qtd : int) : boolean
+    + removerProduto(nome : String) : boolean
+    + calcularTotalPedido() : double
+    + calcularTotalComDesconto() : double
+    + exibirResumoPedido()
+}
+
+class Loja {
+    - nomeLoja : String
+    - produtos : ArrayList<Produto>
+    - clientes : ArrayList<Cliente>
+    - pedidos : ArrayList<Pedido>
+    --
+    + Loja(nomeLoja : String)
+    + adicionarProduto(p : Produto)
+    + adicionarCliente(c : Cliente)
+    + procurarProduto(nome : String) : Produto
+    + registarPedido(p : Pedido)
+    + listarProdutos()
+    + listarClientes()
+    + mostrarValorTotalStock()
+}
+
+class Main {
+    + {static} main(args : String[])
+    - {static} fazerPedido(scanner, loja)
+    - {static} reporStock(scanner, loja)
+    - {static} lerInteiro(scanner) : int
+}
+
+' ── Relações ──────────────────────────────────────
+Cliente <|-- ClienteVIP : extends
+
+Pedido "1" o-- "1" Cliente       : associado a
+Pedido "1" o-- "0..*" Produto    : contém
+
+Loja "1" *-- "0..*" Produto      : gere
+Loja "1" *-- "0..*" Cliente      : gere
+Loja "1" *-- "0..*" Pedido       : regista
+
+Main ..> Loja      : usa
+Main ..> Pedido    : usa
+Main ..> Cliente   : usa
+Main ..> ClienteVIP : usa
+Main ..> Produto   : usa
+
+@enduml
